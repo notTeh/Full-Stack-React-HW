@@ -11,12 +11,13 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   if (!token) {
     return res.sendStatus(401); // Unauthorized
   }
-  jwt.verify(token, process.env.JWT_SECRET as string, (err, user: JwtPayload) => {
+  jwt.verify(token, process.env.JWT_SECRET_KEY as string, (err, decoded) => {
     if (err) {
       return res.sendStatus(403); // Forbidden
     }
+    const user = decoded as JwtPayload; // Explicitly cast decoded to JwtPayload
     req.body.user = user; // Add user data to request object
-    next();
-  }
-  );
+    return next(); // Ensure all code paths return a value
+  });
+  return;
 };
